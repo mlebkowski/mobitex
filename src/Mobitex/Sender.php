@@ -40,7 +40,7 @@ class Sender {
 		
 	}
 	public static function create($user, $md5Pass, $from) {
-		return new self($user, $md5Pass, $from);
+		return new static($user, $md5Pass, $from);
 	}
 	
 	
