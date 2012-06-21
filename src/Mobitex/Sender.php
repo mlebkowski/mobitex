@@ -32,6 +32,7 @@ class Sender {
 	
 	
 	protected $pass, $user, $from;
+	protected $defaultType = self::TYPE_SMS;
 	protected $httpClient;
 	
 	public function __construct($user, $md5Pass, $from) {
@@ -55,7 +56,12 @@ class Sender {
 		}
 		return floatval($value);
 	}
-	public function sendMessage($phone, $text, $type = self::TYPE_SMS) {
+	
+	public function sendMessage($phone, $text, $type = null) {
+		if (null === $type) {
+			$type = $this->defaultType;
+		}
+	
 		// TODO: sprawdzać długość tekstu?
 		$phone = $this->formatPhone($phone);
 		$result = $this->get(self::URL_SEND, array (
@@ -164,6 +170,11 @@ class Sender {
 	}
 	public function getHttpClient() {
 		return $this->httpClient;
+	}
+	
+	public function setDefaultType($type) {
+		$this->defaultType = $type;
+		return $this;
 	}
 	
 	public function getErrorMessage($errNo) {

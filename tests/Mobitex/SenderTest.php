@@ -67,6 +67,24 @@ class SenderTest extends TestCase {
 		$sender->sendMessage('501100100', "Hello World!");
 	}
 	
+	public function testDefaultMessageType() {
+		$sender = $this->createSender();
+		$client = $sender->getHttpClient();
+		
+		$client->setDefaultRecord(Sender::STATUS_OK);
+		
+		$sender->setDefaultType(Sender::TYPE_UNICODE);
+		try {
+			$sender->sendMessage(null, null);
+		} catch (Exception $E) {}
+		
+		$lastRequest = $client->getLastRequest();
+		$query = parse_url($lastRequest, PHP_URL_QUERY);
+		parse_str($query, $query);
+		
+		$this->assertEquals(Sender::TYPE_UNICODE, $query['type']);
+	}
+	
 	/**
 	 * @dataProvider providerValidPhoneNumbers
 	 **/
