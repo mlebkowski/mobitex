@@ -67,6 +67,8 @@ Verify Phone Number
 -------------------
 
 ```php
+<?php 
+
 $sender = \Mobitex\Sender::create($username, md5($password), $fromName);
 try {
   if (false === $sender->verifyNumber("500 100 10"))
