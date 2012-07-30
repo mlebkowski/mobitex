@@ -23,6 +23,9 @@ class Sender {
 	const STATUS_FORBIDDEN = '114';
 	const STATUS_PAYMENT_REQUIRED = '202';
 	const STATUS_GENERIC_ERROR = '201';
+	const STATUS_EMPTY_TEXT = '103';
+	const STATUS_TARGET_NETWORK_BLOCKED = '205';
+	const STATUS_INVALID_NUMBER = '106';
 	
 	/**
 	 * default country code prefix
@@ -55,6 +58,25 @@ class Sender {
 			throw new Exception\General($data);
 		}
 		return floatval($value);
+	}
+	
+	/**
+	 * @retun bool number is valid and won’t be rejected by the API
+	 **/
+	public function verifyNumber($phone) {
+		try {
+			$this->sendMessage($phone, '');
+		} catch (Exception\General $e) {
+			switch ($e->getCode()) {
+			case self::STATUS_TARGET_NETWORK_BLOCKED:
+			case self::STATUS_INVALID_NUMBER:
+				return false;
+			case self::STATUS_EMPTY_TEXT:
+				return true;
+			}
+			throw $e;
+		}
+		throw new Exception\General('Couldn’t check phonu number validity');
 	}
 	
 	public function sendMessage($phone, $text, $type = null) {
@@ -186,17 +208,17 @@ self::STATUS_OK => 'Wiadomość SMS została prawidłowo odebrana przez Serwis',
 '005' => 'Status pośredni, wyjaśnienie w parametrze „err” Tabela 3',
 '007' => 'Błąd doręczenia, wyjaśnienie w parametrze „err” Tabela 3',
 '010' => 'Wiadomość wygasła z powodu niemożliwości jej dostarczenia do odbiorcy',
-'103' => 'Brak pola text w wiadomości lub pole text niepełne (wap push)',
+self::STATUS_EMPTY_TEXT => 'Brak pola text w wiadomości lub pole text niepełne (wap push)',
 '104' => 'Błędnie wypełnione lub brak pola nadawcy',
 self::STATUS_REQUEST_ENTITY_TOO_LONG => 'Pole text jest za długie',
-'106' => 'Błędny lub brak pola numer',
+self::STATUS_INVALID_NUMBER => 'Błędny lub brak pola numer',
 '107' => 'Błędny parametr type',
 '110' => 'Typ wiadomości nie obsługiwany',
 self::STATUS_FORBIDDEN => 'Nieautoryzowany nadawca',
 '201' => 'Błąd systemu, natychmiastowy kontakt z administratorem systemu',
 self::STATUS_PAYMENT_REQUIRED => 'Brak środków na koncie',
 '204' => 'Konto nieaktywne',
-'205' => 'Sieć docelowa zablokowana',
+self::STATUS_TARGET_NETWORK_BLOCKED => 'Sieć docelowa zablokowana',
 '206' => 'Brak autoryzacji dla użytego adresu IP',
 '301' => 'Brak lub błędny identyfikator wiadomości',
 		);
@@ -205,3 +227,4 @@ self::STATUS_PAYMENT_REQUIRED => 'Brak środków na koncie',
 		return isset($codes[$code]) ? $codes[$code] : null;
 	}
 }
+

@@ -103,5 +103,49 @@ class SenderTest extends TestCase {
 			'9digit_prefix_no_plus' => array('48555111666', '48555111666'),
 		);
 	}
+	
+	public function testVerifyNumber() {
+		$sender = $this->createSender();
+		$client = $sender->getHttpClient();
+		
+		$client->pushRecord(Sender::STATUS_EMPTY_TEXT);
+		$isValid = $sender->verifyNumber('500100100');
+		$this->assertEquals(true, $isValid);
+		
+		$client->pushRecord(Sender::STATUS_TARGET_NETWORK_BLOCKED);
+		$isValid = $sender->verifyNumber('500100100');
+		$this->assertEquals(false, $isValid);
+	}
+	
+	/**
+	 * @expectedException	Mobitex\Exception
+	 */
+	public function testVerifyNumberOtherError() {
+		$sender = $this->createSender();
+		$client = $sender->getHttpClient();
 
+		$client->pushRecord(Sender::STATUS_PAYMENT_REQUIRED);
+		$isValid = $sender->verifyNumber('500100100');
+	}
+	
+	public function testVerifyInvalidNumber() {
+		$sender = $this->createSender();
+		$client = $sender->getHttpClient();
+		
+		$client->pushRecord(Sender::STATUS_INVALID_NUMBER);
+		$isValid = $sender->verifyNumber("50010010");
+		$this->assertEquals(false, $isValid);
+	}
+	
+	/**
+	 * @expectedException	Mobitex\Exception\General
+	 */
+	public function testSendEmptyMessage() {
+		$sender = $this->createSender();
+		$client = $sender->getHttpClient();
+		
+		$client->pushRecord(Sender::STATUS_EMPTY_TEXT);
+		$sender->sendMessage("500100100", "");
+	}
+	
 };
