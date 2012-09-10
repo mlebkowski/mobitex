@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="Mobitex Sender" default="build">
+	<target name="build" depends="prepare,phpunit" />
+
+	<target name="clean" description="Cleanup build artifacts">
+		<delete dir="${basedir}/build/api" />
+		<delete dir="${basedir}/build/code-browser" />
+		<delete dir="${basedir}/build/coverage" />
+		<delete dir="${basedir}/build/logs" />
+	</target>
+
+	<target name="prepare" depends="clean,composer" description="Prepare for build">
+		<mkdir dir="${basedir}/build/api" />
+		<mkdir dir="${basedir}/build/code-browser" />
+		<mkdir dir="${basedir}/build/coverage" />
+		<mkdir dir="${basedir}/build/logs" />
+	</target>
+
+	<target name="composer" description="updates composer libs">
+		<exec dir="${basedir}" executable="sh" failonerror="true">
+			<arg value="-c" />
+			<arg value="curl -s http://getcomposer.org/installer | php" />
+		</exec>
+
+		<exec executable="php" failonerror="true">
+			<arg line="${basedir}/composer.phar install --no-ansi --no-interaction" />
+		</exec>
+	</target>
+
+	<target name="lint" description="Perform syntax check of sourcecode files">
+		<apply executable="php" failonerror="true">
+			<arg value="-l" />
+
+			<fileset dir="${basedir}/app">
+				<include name="**/*.php" />
+				<modified />
+			</fileset>
+
+			<fileset dir="${basedir}/tests">
+				<include name="**/*.php" />
+				<modified />
+			</fileset>
+		</apply>
+	</target>
+
+	<target name="phpunit" description="Run unit tests with PHPUnit">
+		<exec executable="phpunit" failonerror="true" />
+	</target>
+
+</project>
+
