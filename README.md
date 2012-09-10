@@ -62,3 +62,22 @@ $value = $sender->checkBallance();
 
 printf("You have %.2f PLN left \n", $value);
 ```
+
+Verify Phone Number 
+-------------------
+
+```php
+<?php 
+
+$sender = \Mobitex\Sender::create($username, md5($password), $fromName);
+try {
+  if (false === $sender->verifyNumber("500 100 10"))
+    echo "This number is invalid\n";
+  } else {
+    // …
+  }
+} catch (Mobitex\Exception $e) {
+  // there still can be exceptions, invalid credentials for instance
+  echo $e->getMessage() . "\n";
+}
+```
