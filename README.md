@@ -8,7 +8,10 @@ See:
   * http://smscenter.pl
   * http://smscenter.pl/specyfikacja_mt.pdf
 
+Build
+-----
 
+![Build status](https://www.codeship.io/projects/fe0ad410-e197-0130-15b1-6ed1f3be694c/status)
 
 Usage
 -----
