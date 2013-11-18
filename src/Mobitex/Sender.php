@@ -2,7 +2,7 @@
 
 class Sender {
 
-	const ENDPOINT = 'https://api.mobitex.pl/';
+	const ENDPOINT = 'http://api.mobitex.pl/';
 	
 	const RESPONSE_FORMAT = '/^Status: (?<status>\d{3}), Id: (?<id>[a-f0-9]{32}), Number: (?<number>\d+)$/';
 	
